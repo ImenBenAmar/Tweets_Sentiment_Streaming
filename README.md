@@ -1,6 +1,6 @@
 
 
-# 🏀 Bluesky NBA Real-Time Sentiment Analysis
+# 🦋 Bluesky NBA Real-Time Sentiment Analysis
 
 A real-time data streaming pipeline that captures live posts from **Bluesky** regarding the **NBA**, performs sentiment analysis using **Apache Spark Structured Streaming**, and visualizes the results in **Grafana** via **InfluxDB**.
 
