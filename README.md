@@ -171,9 +171,10 @@ The video below demonstrates the live data flow, showing the sentiment analysis 
 
 ### 5. Search & Analytics (Kibana & Elasticsearch)
 Exploring the raw tweets and performing full-text search.
-*(Screenshot of Kibana Discover tab showing `twitter_dataset`)*
+[▶️kibana](docs/kibana.jpg)
 
 [▶️ Click here to watch the Kibana Dashboard Demo](docs/Kibana.mp4)
+
 
 
 ## 🧠 Technical Concepts
@@ -200,6 +201,11 @@ In streaming, "Event Time" (when the post was written) differs from "Processing 
 *   **Append Mode:** Only new rows are added to the result table. (Used in this project for writing to Kafka).
 *   **Complete Mode:** The entire result table is rewritten every trigger. (Useful for aggregations/counts).
 *   **Update Mode:** Only rows that changed are written.
+
+
+### Config WSL (If u struggle with windows): 
+u can use this guide : 
+![pdf](/docs/Bluesky Tweets Streaming Pipeline.pdf)
 
 ---
 
