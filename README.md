@@ -132,6 +132,9 @@ Kafka is optimized for high throughput and low latency I/O.
     *   *Traditional:* Data is copied from Disk → Kernel → Application → Kernel → Network (4 copies).
     *   *Kafka:* Uses the `sendfile` system call to transfer data directly from Disk Cache to Network Socket, bypassing the application context entirely. This reduces CPU cycles and memory usage.
 
+### ⚡ 🏗 Kafka Internal Architecture
+![plot](docs/architecture.jpg)
+
 ### 🌊 Handling Late Data (Watermarking)
 In streaming, "Event Time" (when the post was written) differs from "Processing Time" (when Spark receives it).
 *   **The Problem:** What if a post from 12:00 arrives at 12:05 due to network lag?
