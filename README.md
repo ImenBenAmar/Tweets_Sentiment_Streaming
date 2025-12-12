@@ -20,6 +20,34 @@ The pipeline consists of four main stages:
 
 ---
 
+## 📚 Ressources & Documentation
+
+### 🔷 Bluesky & APIs
+- [Bluesky Jetstream Documentation](https://github.com/bluesky-social/jetstream)
+- [AT Protocol Overview](https://atproto.com/guides/overview)
+
+### 🔷 Streaming & Messaging
+- [Apache Kafka Documentation](https://kafka.apache.org/documentation/)
+- [Kafka Python Client (kafka-python)](https://kafka-python.readthedocs.io/en/master/)
+- [Spark Structured Streaming Guide](https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html)
+
+### 🔷 Data Processing & NLP
+- [PySpark API Documentation](https://spark.apache.org/docs/latest/api/python/)
+- [TextBlob Sentiment Analysis](https://textblob.readthedocs.io/en/dev/)
+
+### 🔷 Databases & Storage
+- [InfluxDB Documentation](https://docs.influxdata.com/)
+- [InfluxDB Python Client](https://github.com/influxdata/influxdb-client-python)
+- [Elasticsearch Guide](https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html)
+
+### 🔷 Visualization
+- [Grafana Documentation](https://grafana.com/docs/)
+- [Kibana Documentation](https://www.elastic.co/guide/en/kibana/current/index.html)
+### 🔷 Misc
+- [Python Dotenv](https://pypi.org/project/python-dotenv/)
+- [WebSockets for Python](https://websockets.readthedocs.io/en/stable/)
+
+
 ## 🛠 Technologies & Prerequisites
 
 ### Tools
@@ -103,11 +131,16 @@ bin/kafka-server-start.sh config/server.properties
     *   Go to **Stack Management > Data Views**.
     *   Create a data view for index: `twitter_dataset`.
 
-**Option B: Start InfluxDB & Grafana**
+**Start InfluxDB & Grafana**
 ```bash
-# Mac (Homebrew)
-brew services start influxdb
-brew services start grafana-server
+sudo systemctl start influxdb
+sudo systemctl enable influxdb     # Pour démarrer automatiquement au boot
+sudo systemctl status influxdb
+
+sudo systemctl start grafana-server
+sudo systemctl enable grafana-server   # Auto-start
+sudo systemctl status grafana-server
+
 ```
 
 ---
@@ -168,13 +201,12 @@ Processed sentiment data (polarity and subjectivity) stored in the database.
 The video below demonstrates the live data flow, showing the sentiment analysis updating in real-time on the Grafana Dashboard.
 
 [▶️ Click here to watch the Grafana Dashboard Demo](docs/grafana.mp4)
+![grafana](docs/grafana.png)
 
 ### 5. Search & Analytics (Kibana & Elasticsearch)
 Exploring the raw tweets and performing full-text search.
-![kibana](docs/kibana.jpg)
-
 [▶️ Click here to watch the Kibana Dashboard Demo](docs/Kibana.mp4)
-
+![kibana](docs/kibana.jpg)
 
 
 ## 🧠 Technical Concepts
