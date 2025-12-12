@@ -11,7 +11,7 @@ While watching the NBA playoffs and scrolling through social media, I wondered i
 
 The pipeline consists of four main stages:
 
-![plot](docs/architecture.jpg)
+![plot](docs/architecturea.png)
 
 1.  **Ingestion:** Python script connects to Bluesky Jetstream (WebSocket) and filters for "NBA" posts in English.
 2.  **Buffering:** Raw JSON data is pushed to Apache Kafka (Topic: `twitterdata`).
@@ -26,8 +26,8 @@ The pipeline consists of four main stages:
 *   **Language:** Python 3.8+
 *   **Streaming Platform:** Apache Kafka & Zookeeper
 *   **Processing Engine:** Apache Spark (PySpark 3.5.x)
-*   **Database:** InfluxDB (Time Series)
-*   **Visualization:** Grafana
+*   **Database:** InfluxDB (Time Series) & Elasticsearch (NoSQL/Search)
+*   **Visualization:** Grafana & Kibana
 *   **Libraries:** `websockets`, `kafka-python`, `textblob`, `influxdb-client`
 
 ### Prerequisites
@@ -43,143 +43,14 @@ Create a virtual environment and install the dependencies:
 
 ```bash
 pip install pyspark textblob python-dotenv
-pip install kafka-python influxdb-client python-dotenv
+pip install kafka-python influxdb-client elasticsearch python-dotenv
 ```
 
 ### 2. Configuration (`.env`)
 Create a `.env` file in the root directory. This keeps your credentials safe.
 
 ```ini
-# Kafka
-# Kafka
+# --- KAFKA ---
 KAFKA_BOOTSTRAP_SERVERS=localhost:9092
 KAFKA_TOPIC=twitterdata
-KAFKA_OUTPUT_TOPIC=twitterdata-clean
-KAFKA_GROUP_ID=bluesky-influx-group
 
-# Spark
-SPARK_APP_NAME=BlueskySentimentAnalysis
-SPARK_CHECKPOINT_DIR=/tmp/spark-checkpoint
-
-# InfluxDB
-INFLUXDB_URL=http://localhost:8086
-influxdb_token=YOUR_INFLUX_TOKEN_HERE
-influxdb_org=YOUR_ORG_NAME
-influxdb_bucket=YOUR_BUCKET_NAME
-```
-
-### 3. Start Infrastructure
-You need to start Zookeeper, Kafka, and InfluxDB.
-
-**Option A: Using Terminal (Local Install)**
-```bash
-# 1. Start Zookeeper
-bin/zookeeper-server-start.sh config/zookeeper.properties
-
-# 2. Start Kafka
-bin/kafka-server-start.sh config/server.properties
-
-# 3. Create Topics
-bin/kafka-topics.sh --create --topic twitterdata --bootstrap-server localhost:9092
-bin/kafka-topics.sh --create --topic twitterdata-clean --bootstrap-server localhost:9092
-```
-
-**Option B: Start InfluxDB & Grafana**
-```bash
-# Mac (Homebrew)
-brew services start influxdb
-brew services start grafana-server
-```
-
----
-
-## 🚀 How to Run
-
-Run the scripts in the following order using separate terminal tabs:
-
-**Step 1: Start the Producer (Ingestion)**
-Connects to Bluesky and sends data to Kafka.
-```bash
-python extract_bluesky_to_kafka.py
-```
-
-**Step 2: Start Spark Streaming (Processing)**
-Reads from Kafka, applies sentiment analysis, and writes back to Kafka.
-*Note: The script automatically handles the `spark-sql-kafka` package.*
-```bash
-spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 process_spark_streaming.py
-```
-
-**Step 3: Start the Loader (Storage)**
-Reads from the processed Kafka topic and saves to InfluxDB.
-```bash
-python load_kafka_to_influxdb.py
-```
-
-**Step 4: Visualize**
-1.  Open Grafana (`http://localhost:3000`).
-2.  Add InfluxDB as a Data Source (Flux language).
-3.  Create a dashboard to query the measurement `bluesky_post`.
-4.  Example query to count "Positive" butterflies:
-    ```flux
-    from(bucket: "YOUR_BUCKET") 
-      |> range(start: -1h) 
-      |> filter(fn: (r) => r["_measurement"] == "bluesky_post")
-      |> filter(fn: (r) => r["polarity_cat"] == "Positive")
-    ```
-
----
-
-## 📸 Project Demo & Outputs
-
-Here is the pipeline in action:
-
-### 1. Data Ingestion (Terminal)
-The Python Producer filters for posts and pushes them to Kafka.
-![Producer Output](docs/terminal_output.png)
-
-### 2. InfluxDB Storage (Table View)
-Processed sentiment data (polarity and subjectivity) stored in the database.
-![InfluxDB Table](docs/influx_table.png)
-
-### 3. Real-Time Visualization (Influx Data Explorer)
-Scatter plot showing sentiment distribution over time.
-![Sentiment Visualization](docs/influx_graph.png)
-
----
-
-## 🧠 Technical Concepts (The "Why")
-
-This project was built to explore specific engineering concepts:
-
-### ⚡ Why is Kafka so fast?
-Kafka is optimized for high throughput and low latency I/O.
-1.  **Sequential I/O:** Kafka avoids random disk access (which is slow). It treats data as a "Log" (append-only structure). Writing to the end of a file sequentially is nearly as fast as writing to RAM.
-2.  **Zero Copy Principle:**
-    *   *Traditional:* Data is copied from Disk → Kernel → Application → Kernel → Network (4 copies).
-    *   *Kafka:* Uses the `sendfile` system call to transfer data directly from Disk Cache to Network Socket, bypassing the application context entirely. This reduces CPU cycles and memory usage.
-
-### ⚡ 🏗 Kafka Internal Architecture
-![plot](docs/kafka.png)
-
-### 🌊 Handling Late Data (Watermarking)
-In streaming, "Event Time" (when the post was written) differs from "Processing Time" (when Spark receives it).
-*   **The Problem:** What if a post from 12:00 arrives at 12:05 due to network lag?
-*   **The Solution:** Spark uses **Watermarking**.
-    *   `df.withWatermark("ts", "10 seconds")` tells the engine: "Wait for late data up to 10 seconds. Anything older than that is dropped."
-    *   This prevents the application from keeping infinite state in memory waiting for old data.
-
-### 📊 Structured Streaming Modes
-*   **Append Mode:** Only new rows are added to the result table. (Used in this project for writing to Kafka).
-*   **Complete Mode:** The entire result table is rewritten every trigger. (Useful for aggregations/counts).
-*   **Update Mode:** Only rows that changed are written.
-
----
-
-## 🔮 Future Enhancements
-*   **Dockerize:** Create a `docker-compose.yml` to launch Kafka, Spark, InfluxDB, and the Python scripts with one command.
-*   **Better NLP:** Replace `TextBlob` with a pre-trained Transformer model (like BERT) for higher accuracy on slang/sports terms.
-*   **Direct Sink:** Write from Spark directly to InfluxDB (skipping the second Kafka topic) to reduce latency.
-
-## 📝 Credits
-Inspiration and references taken from various Spark Streaming tutorials and the official documentation for Apache Kafka and InfluxDB.
