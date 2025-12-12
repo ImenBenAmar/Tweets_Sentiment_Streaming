@@ -11,7 +11,7 @@ While watching the NBA playoffs and scrolling through social media, I wondered i
 
 The pipeline consists of four main stages:
 
-![plot](docs/Architecture.png)
+![plot](docs/architecture.png)
 
 1.  **Ingestion:** Python script connects to Bluesky Jetstream (WebSocket) and filters for "NBA" posts in English.
 2.  **Buffering:** Raw JSON data is pushed to Apache Kafka (Topic: `twitterdata`).
