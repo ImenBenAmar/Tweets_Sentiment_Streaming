@@ -162,18 +162,18 @@ Processed sentiment data (polarity and subjectivity) stored in the database.
 ![InfluxDB Table](docs/influx_table.png)
 
 ### 3. Real-Time Visualization InfluxDB (Video Demo)
-[▶️ Click here to watch the InfluxDB Visualization Demo](docs/grafana.webm)
+[▶️ Click here to watch the InfluxDB Visualization Demo](docs/influxDB.webm)
 
 ### 4.Real-Time Grafana Dashboard (Video Demo)
 The video below demonstrates the live data flow, showing the sentiment analysis updating in real-time on the Grafana Dashboard.
 
-[▶️ Click here to watch the Grafana Dashboard Demo](docs/1212.mp4)
+[▶️ Click here to watch the Grafana Dashboard Demo](docs/grafana.mp4)
 
 ### 5. Search & Analytics (Kibana & Elasticsearch)
 Exploring the raw tweets and performing full-text search.
 *(Screenshot of Kibana Discover tab showing `twitter_dataset`)*
 
-[▶️ Click here to watch the Grafana Dashboard Demo](docs/1212(1).mp4)
+[▶️ Click here to watch the Kibana Dashboard Demo](docs/Kibana.mp4)
 
 
 ## 🧠 Technical Concepts
