@@ -1,1 +1,1 @@
-brew services start grafana
+http://localhost:3000/login

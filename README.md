@@ -189,3 +189,52 @@ In this set-up, I am using the following tools:
 https://datasciencechalktalk.wordpress.com/2019/07/17/streaming-analysis-with-kafka-influxdb-and-grafana/
 https://towardsdatascience.com/twitter-sentiment-analysis-a-tale-of-stream-processing-8fd92e19a6e6
 https://blaqfireroundup.wordpress.com/2021/11/01/kafka-and-spark-structured-streaming/
+
+
+
+
+
+    TextBlob renvoie deux chiffres :
+
+        Polarity (Polarité) : De -1 (Très négatif) à +1 (Très positif). 0 est neutre.
+
+        Subjectivity (Subjectivité) : De 0 (Fait objectif) à 1 (Opinion personnelle).
+
+    UDF : C'est le pont qui permet à Spark (souvent écrit en Scala/Java) d'exécuter ta fonction Python ligne par ligne.
+
+    Checkpoint : C'est crucial. Si ton programme plante, au redémarrage, il regarde le dossier checkpoint pour savoir exactement quel message il a traité en dernier, pour ne rien perdre ni doubler.
+
+
+    Résumé global du projet (La "Big Picture")
+
+Maintenant que tu as les 3 scripts, voici comment ton projet fonctionne de A à Z :
+
+    Extract (Extraction) - Script 1 (Producer) :
+
+        Connecté à Jetstream (BlueSky).
+
+        Filtre "NBA".
+
+        Envoie le brut dans Kafka (twitterdata).
+
+    Transform (Transformation) - Script 2 (Spark) :
+
+        Lit Kafka (twitterdata).
+
+        Nettoie le texte (enlève les liens).
+
+        Calcule le sentiment (Positive/Negative).
+
+        Envoie le propre dans Kafka (twitterdata-clean).
+
+    Load (Chargement) - Script 3 (Ce script) :
+
+        Lit Kafka (twitterdata-clean).
+
+        Formate les données pour les séries temporel.
+
+        Insère dans InfluxDB.
+
+    Visualize (Visualisation) - Grafana (Pas de code, interface web) :
+
+        Se connecte à InfluxDB pour afficher les courbes en temps réel.

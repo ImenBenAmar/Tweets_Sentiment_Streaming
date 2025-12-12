@@ -15,7 +15,7 @@ async def listen_to_jetstream():
     # on demande seulement les "posts" (wantedCollections)
     uri = "wss://jetstream2.us-east.bsky.network/subscribe?wantedCollections=app.bsky.feed.post"
     
-    print(f"Connecting to Jetstream... Filtering for '{SEARCH_KEYWORD}'")
+    print(f"Connecting to Jetstream... Filtering for '{SEARCH_KEYWORD}' in ENGLISH only.")
 
     async with websockets.connect(uri) as websocket:
         while True:
@@ -31,8 +31,14 @@ async def listen_to_jetstream():
                     # On récupère le texte
                     text_content = record.get('text', '')
                     
-                    # FILTRE : On garde seulement si le mot clé est présent
-                    if SEARCH_KEYWORD.lower() in text_content.lower():
+                    # On récupère la liste des langues (ex: ['en'], ['fr'], ou [])
+                    # On utilise .get() avec une liste vide par défaut pour éviter les erreurs
+                    langs = record.get('langs', [])
+
+                    # --- FILTRES ---
+                    # 1. Le mot clé doit être présent (ex: NBA)
+                    # 2. 'en' (English) doit être dans la liste des langues déclarées
+                    if SEARCH_KEYWORD.lower() in text_content.lower() and 'en' in langs:
                         
                         payload = {
                             "text": text_content,
@@ -41,8 +47,10 @@ async def listen_to_jetstream():
                         
                         # Envoi à Kafka
                         producer.send(KAFKA_TOPIC, json.dumps(payload).encode('utf-8'))
-                        # On affiche un petit point pour dire que ça marche sans ralentir
-                        print(f"Sent: {text_content[:40]}...")
+                        
+                        # On affiche un petit point pour dire que ça marche
+                        # On ajoute [EN] dans le print pour confirmer visuellement
+                        print(f"[EN] Sent: {text_content[:40]}...")
 
             except websockets.exceptions.ConnectionClosed:
                 print("Connection closed. Reconnecting...")

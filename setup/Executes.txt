@@ -1,0 +1,5 @@
+pip install pyspark textblob python-dotenv
+pip install kafka-python influxdb-client python-dotenv
+python3 extract_bluesky_to_kafka.py
+spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 process_spark_streaming.py
+python3 load_kafka_to_influxdb.py
