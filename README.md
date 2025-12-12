@@ -172,7 +172,7 @@ The video below demonstrates the live data flow, showing the sentiment analysis 
 ### 5. Search & Analytics (Kibana & Elasticsearch)
 Exploring the raw tweets and performing full-text search.
 *(Screenshot of Kibana Discover tab showing `twitter_dataset`)*
-![Kibana Dashboard](docs/kibana_dashboard.png)
+[▶️ Click here to watch the Grafana Dashboard Demo](docs/1212 (1).mp4)
 
 
 ## 🧠 Technical Concepts
