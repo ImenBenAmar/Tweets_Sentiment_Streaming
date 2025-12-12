@@ -171,7 +171,7 @@ The video below demonstrates the live data flow, showing the sentiment analysis 
 
 ### 5. Search & Analytics (Kibana & Elasticsearch)
 Exploring the raw tweets and performing full-text search.
-[▶️kibana](docs/kibana.jpg)
+![kibana](docs/kibana.jpg)
 
 [▶️ Click here to watch the Kibana Dashboard Demo](docs/Kibana.mp4)
 
@@ -203,9 +203,12 @@ In streaming, "Event Time" (when the post was written) differs from "Processing 
 *   **Update Mode:** Only rows that changed are written.
 
 
-### Config WSL (If u struggle with windows): 
-u can use this guide : 
-![pdf](/docs/Bluesky Tweets Streaming Pipeline.pdf)
+# Config WSL (If you struggle with Windows)
+
+You can use this guide:
+
+👉 [Télécharger le guide PDF](./docs/Bluesky%20Tweets%20Streaming%20Pipeline.pdf)
+
 
 ---
 
@@ -214,6 +217,5 @@ u can use this guide :
 *   **Better NLP:** Replace `TextBlob` with a pre-trained Transformer model (like BERT) for higher accuracy on slang/sports terms.
 *   **Direct Sink:** Write from Spark directly to InfluxDB (skipping the second Kafka topic) to reduce latency.
 
-## 📝 Credits
-Inspiration and references taken from various Spark Streaming tutorials and the official documentation for Apache Kafka and InfluxDB.
+⭐ Si ce projet vous a été utile, n'hésitez pas à lui donner une étoile ! ⭐
 
